@@ -6,7 +6,7 @@ from flask_cors import CORS
 
 app = Flask(__name__)
 
-CORS(app)
+CORS(app, resources={r"/log": {"origins": "https://gray-sky-0a920b310.4.azurestaticapps.net"}})
 
 # Splunk HEC URL and token
 SPLUNK_HEC_URL = "http://localhost:8088/services/collector/event"  # Use your local Splunk HEC URL
