@@ -3,8 +3,11 @@ from flask_cors import CORS
 
 app = Flask(__name__)
 
-# Enable CORS for the /log endpoint to accept all origins
-CORS(app, resources={r"/log": {"origins": "*"}})
+# Enable CORS for the entire app or specific routes
+CORS(app)  # This will enable CORS for all routes in your Flask app
+
+# If you want to be more restrictive and only allow certain origins, you can use:
+# CORS(app, resources={r"/log": {"origins": "http://yourfrontenddomain.com"}})
 
 @app.route('/')
 def home():
