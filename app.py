@@ -30,33 +30,47 @@ def log_user_query():
 
     # Prepare the log data for Splunk
     log_data = {
-        "event": json.dumps({
+        "event": {
             "timestamp": timestamp,
             "username": username,
             "query": query,
             "response": response
-        })
+        }
     }
 
     # Send log to Splunk using the HEC API
-    print(log_data)
+    print("Sending log data to Splunk...")
     try:
         response = requests.post(SPLUNK_HEC_URL, headers={
             "Authorization": f"Splunk {SPLUNK_HEC_TOKEN}",
             "Content-Type": "application/json"
         }, data=json.dumps(log_data))
 
+        # Capture the response from Splunk
+        splunk_response = {
+            "status_code": response.status_code,
+            "response_text": response.text
+        }
+
         # Check if Splunk received the log successfully
-        if response.status_code == 200:
+        if response.status_code in [200, 201]:
             print("Log successfully sent to Splunk")
         else:
             print(f"Failed to send log to Splunk. Status code: {response.status_code}")
-            print(response.text)  # For debugging purposes
-    except requests.exceptions.RequestException as e:
-        print(f"Error sending log to Splunk: {e}")
+            print(f"Response: {response.text}")
 
-    # Respond back to the frontend
-    return jsonify({'status': 'success', 'timestamp': timestamp})
+    except requests.exceptions.RequestException as e:
+        splunk_response = {
+            "status_code": 500,
+            "response_text": f"Error sending log to Splunk: {e}"
+        }
+
+    # Respond back to the frontend with Splunk's response
+    return jsonify({
+        'status': 'success',
+        'timestamp': timestamp,
+        'splunk_response': splunk_response
+    })
 
 if __name__ == '__main__':
-    app.run()
+    app.run(debug=True)
