@@ -14,7 +14,7 @@ SPLUNK_HEC_TOKEN = "47be455f-4ad1-4971-ab34-3c52f1002f96"  # Replace with your a
 
 @app.route('/')
 def home():
-    return "Welcome to the Flask API!"
+    return "Welcome to the Flask API!s"
 
 # API endpoint to handle user logs
 @app.route('/log', methods=['POST'])
