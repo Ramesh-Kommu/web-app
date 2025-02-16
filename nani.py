@@ -6,7 +6,8 @@ from flask_cors import CORS
 
 app = Flask(__name__)
 
-CORS(app, resources={r"/log": {"origins": "https://gray-sky-0a920b310.4.azurestaticapps.net"}})
+# Enable CORS for all origins for the '/log' endpoint
+CORS(app, resources={r"/log": {"origins": "*"}})
 
 # Splunk HEC URL and token
 SPLUNK_HEC_URL = "http://localhost:8088/services/collector/event"  # Use your local Splunk HEC URL
@@ -15,6 +16,15 @@ SPLUNK_HEC_TOKEN = "47be455f-4ad1-4971-ab34-3c52f1002f96"  # Replace with your a
 @app.route('/')
 def home():
     return "Welcome to the Flask API!"
+
+# Preflight CORS handling (OPTIONS method)
+@app.route('/log', methods=['OPTIONS'])
+def options_handler():
+    response = jsonify({"message": "CORS Preflight"})
+    response.headers.add('Access-Control-Allow-Origin', '*')  # Or specify your domain
+    response.headers.add('Access-Control-Allow-Methods', 'POST, OPTIONS')  # Allow POST and OPTIONS methods
+    response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')  # Add headers needed
+    return response
 
 # API endpoint to handle user logs
 @app.route('/log', methods=['POST'])
@@ -39,7 +49,6 @@ def log_user_query():
     }
 
     # Send log to Splunk using the HEC API
-    print(log_data)
     try:
         response = requests.post(SPLUNK_HEC_URL, headers={
             "Authorization": f"Splunk {SPLUNK_HEC_TOKEN}",
