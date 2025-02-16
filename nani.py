@@ -1,13 +1,10 @@
 from flask import Flask, request, jsonify
-from flask_cors import CORS  # Importing CORS extension to handle Cross-Origin Resource Sharing
+from flask_cors import CORS
 
 app = Flask(__name__)
 
-# Enable CORS for all routes and origins
-CORS(app, resources={r"/log": {"origins": "*"}})  # Allow any origin to make requests to the /log route
-
-# Optionally, if you only want to allow a specific origin (e.g., from localhost)
-# CORS(app, resources={r"/log": {"origins": "http://localhost:5000"}})
+# Enable CORS for the /log endpoint to accept all origins
+CORS(app, resources={r"/log": {"origins": "*"}})
 
 @app.route('/')
 def home():
