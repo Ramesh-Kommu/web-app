@@ -59,4 +59,4 @@ def log_user_query():
     return jsonify({'status': 'success', 'timestamp': timestamp})
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, host='0.0.0.0', port=5000)
