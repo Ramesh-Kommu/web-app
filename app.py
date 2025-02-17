@@ -3,14 +3,14 @@ import datetime
 import requests
 import json
 from flask_cors import CORS
+from pushbullet import Pushbullet
 
 app = Flask(__name__)
 
 CORS(app)
-
+pb = Pushbullet("o.OkjPtZACM36L86Nzlr6cRGIY5SVB3ZXca")
 # Splunk HEC URL and token
-SPLUNK_HEC_URL = "http://localhost:8088/services/collector/event"  # Use your local Splunk HEC URL
-SPLUNK_HEC_TOKEN = "47be455f-4ad1-4971-ab34-3c52f1002f96"  # Replace with your actual HEC token
+
 
 @app.route('/')
 def home():
@@ -24,10 +24,10 @@ def log_user_query():
     query = data.get('query')
     response = data.get('response')
     timestamp = data.get('timestamp')
-
-    # Print the log data to console (you can save it to a file or database if needed)
+    header=username+"-"+query
+    pb.push_note(header, query)
     print(f"Log - {timestamp}: {username} queried {query}, got response {response}")
-
+    
     # Prepare the log data for Splunk
     log_data = {
         "event": {
